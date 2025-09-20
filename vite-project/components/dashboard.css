@@ -1,0 +1,163 @@
+/* 🌐 Whole Page */
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9fbfd, #eef2f7);
+  padding: 40px 30px;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  color: #333;
+  transition: background 0.3s ease;
+}
+
+/* 🏷️ Title */
+.dashboard-header {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 35px;
+  color: #1a1a1a;
+  text-align: center;
+  letter-spacing: 0.8px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.08);
+}
+
+/* 📂 Upload Section */
+.file-upload,
+.file-upload-secondary {
+  margin-bottom: 25px;
+}
+
+.file-upload input[type="file"],
+.file-upload-secondary input[type="file"] {
+  padding: 12px 16px;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #fff;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.file-upload input[type="file"]:hover,
+.file-upload-secondary input[type="file"]:hover {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
+  background: #f9fbff;
+  transform: scale(1.01);
+}
+
+/* Highlight box for second upload */
+.file-upload-secondary {
+  margin: 25px 0;
+  padding: 22px;
+  background: #fffdf3;
+  border: 2px dashed #ffc107;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #7a5d00;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.file-upload-secondary:hover {
+  background: #fff9e6;
+  border-color: #ffb300;
+}
+
+/* 📦 Cards */
+.dashboard-card {
+  background: #fff;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+}
+
+/* Section Headings */
+.dashboard-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #202020;
+  border-left: 5px solid #007bff;
+  padding-left: 12px;
+  letter-spacing: 0.3px;
+}
+
+/* 📊 Grid Layout for Charts */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 📁 File Upload Side-by-Side */
+.file-upload-comparison {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.file-upload-comparison div {
+  flex: 1;
+  min-width: 260px;
+}
+
+/* 📑 Comparison Grid */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.comparison-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* 🛠 Fix DataGrid overflow inside cards */
+.MuiDataGrid-root {
+  width: 100% !important;
+  border: none !important;
+  font-size: 14px;
+  background: transparent;
+}
+
+.MuiDataGrid-columnHeaders {
+  background: #f4f6fa;
+  font-weight: 600;
+  color: #333;
+}
+
+.MuiDataGrid-row:nth-of-type(even) {
+  background: #fafbfc;
+}
+
+.MuiDataGrid-cell {
+  border-bottom: 1px solid #eaecef;
+}
+
+.MuiDataGrid-virtualScroller {
+  overflow-x: hidden !important; /* 🚫 Prevent horizontal scroll breaking layout */
+}
