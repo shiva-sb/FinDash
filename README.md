@@ -89,7 +89,7 @@ Clone the repository:
 
 Bash
 
-git clone https://github.com/your-username/findash.git
+git clone https://github.com/shiva-sb/FinDash.git
 cd findash
 Install Backend Dependencies:
 Navigate to the server directory and install the required npm packages.
