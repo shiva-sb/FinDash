@@ -1,41 +1,49 @@
+// geminiController.js
+
 import fs from "fs";
 import axios from "axios";
 import pdfParse from "pdf-parse";
+import dotenv from "dotenv";
+dotenv.config(); 
 
 export const askGemini = async (req, res) => {
   try {
-    const { prompt } = req.body;
-    let fileContent = "";
+    const { prompt, excelDataJSON } = req.body;
+    let combinedContent = "";
 
-    // Parse uploaded file
-    if (req.file) {
-      const filePath = req.file.path;
-
-      if (req.file.mimetype === "application/pdf") {
-        const dataBuffer = fs.readFileSync(filePath);
-        const pdfData = await pdfParse(dataBuffer);
-        fileContent = pdfData.text; // pdf-parse automatically extracts text
-      } else if (req.file.mimetype === "text/plain") {
-        fileContent = fs.readFileSync(filePath, "utf-8");
-      } else {
-        fs.unlinkSync(filePath);
-        return res.status(400).json({ error: "Unsupported file type" });
-      }
-
-      fs.unlinkSync(filePath); // cleanup
+    // Part 1: Process Excel data if it exists
+    if (excelDataJSON) {
+      // The data is already JSON, just format it for the prompt
+      const excelData = JSON.parse(excelDataJSON);
+      combinedContent += "Here is the data from the uploaded Excel file(s):\n";
+      combinedContent += JSON.stringify(excelData, null, 2);
     }
 
-    const combinedPrompt = prompt
-      ? `${prompt}\n\nFile content:\n${fileContent}`
-      : fileContent || "Please provide a prompt or file.";
+    // Part 2: Process any uploaded PDF files
+    if (req.files && req.files.length > 0) {
+      combinedContent += "\n\nHere is the content from the uploaded PDF file(s):\n";
+      for (const file of req.files) {
+        const dataBuffer = fs.readFileSync(file.path);
+        const pdfData = await pdfParse(dataBuffer);
+        combinedContent += `\n--- Content from ${file.originalname} ---\n`;
+        combinedContent += pdfData.text;
+        // Clean up the temporary file
+        fs.unlinkSync(file.path);
+      }
+    }
 
-    // Gemini API call
+    if (!prompt && !combinedContent) {
+       return res.status(400).json({ error: "No prompt or file content provided." });
+    }
+
+    // Combine prompt with all extracted content
+    const combinedPrompt = `${prompt}\n\n${combinedContent}`;
+
+    // Gemini API call (remains the same)
     const response = await axios.post(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent",
       {
-        contents: [
-          { role: "user", parts: [{ text: combinedPrompt }] },
-        ],
+        contents: [{ role: "user", parts: [{ text: combinedPrompt }] }],
       },
       { params: { key: process.env.GEMINI_API_KEY } }
     );

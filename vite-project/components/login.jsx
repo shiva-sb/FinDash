@@ -1,3 +1,4 @@
+// Login.js
 import React from "react";
 import './aruth.css';
 import { useForm } from "react-hook-form";
@@ -8,6 +9,7 @@ function Login() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  
   const submitCall = async (data) => {
     try {
       const response = await Axios.post(
@@ -26,40 +28,29 @@ function Login() {
 
   return (
     <div className="authContainer">
-      <form className="authForm" onSubmit={handleSubmit(submitCall)}>
-        <h1 className="authTitle">Login</h1>
-        <div className="inputGroup">
-          <label className="label">Email: </label>
-          <input
-            className="input"
-            {...register("email", {
-              required: "Email required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email address"
-              }
-            })}
-            type="email"
-            placeholder="Email"
-          />
-          {errors.email && <div className="error">{errors.email.message}</div>}
+      <div className="authLayout">
+        <div className="authWelcomePanel">
+          <div className="panelContent">
+            <h1 className="panelTitle">Welcome Back!</h1>
+            <p className="panelSubtitle">Log in to access your FinDash dashboard and continue analyzing your data.</p>
+          </div>
         </div>
-        <div className="inputGroup">
-          <label className="label">Password: </label>
-          <input
-            className="input"
-            {...register("password", {
-              required: "Password is required",
-              minLength: { value: 5, message: "Password requires at least 5 characters" }
-            })}
-            type="password"
-            placeholder="Password"
-          />
-          {errors.password && <div className="error">{errors.password.message}</div>}
-        </div>
-        <button type="submit" className="submitButton">Login</button>
-        <p className="toggleText">Don't have an account? <Link to='/register'>Register</Link></p>
-      </form>
+        <form className="authForm" onSubmit={handleSubmit(submitCall)}>
+          <h1 className="authTitle">Login</h1>
+          <div className="inputGroup">
+            <label className="label">Email: </label>
+            <input className="input" {...register("email", { required: "Email required", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address" } })} type="email" placeholder="Email" />
+            {errors.email && <div className="error">{errors.email.message}</div>}
+          </div>
+          <div className="inputGroup">
+            <label className="label">Password: </label>
+            <input className="input" {...register("password", { required: "Password is required", minLength: { value: 5, message: "Password requires at least 5 characters" } })} type="password" placeholder="Password" />
+            {errors.password && <div className="error">{errors.password.message}</div>}
+          </div>
+          <button type="submit" className="submitButton">Login</button>
+          <p className="toggleText">Don't have an account? <Link to='/register' className="toggleLink">Register</Link></p>
+        </form>
+      </div>
     </div>
   );
 }

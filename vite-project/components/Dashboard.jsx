@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { DataGrid } from "@mui/x-data-grid";
@@ -16,39 +15,39 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-
 import "./dashboard.css";
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
+  CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend
 );
 
 function Dashboard() {
+  // State for Excel/PDF data
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
   const [headers1, setHeaders1] = useState([]);
   const [headers2, setHeaders2] = useState([]);
+
+  // State to hold the actual file objects
+  const [file1, setFile1] = useState(null);
+  const [file2, setFile2] = useState(null);
+  
+  // Loading states for file processing
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+
   const [welcome, setWelcome] = useState("Loading...");
 
-  // 🔒 Check auth and fetch welcome message
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const res = await axios.get("/dashboard", { withCredentials: true });
-        setWelcome(res.data.message || `Welcome to Dashboard ${res.data.username}` );
+        setWelcome(res.data.message || `Welcome to Dashboard ${res.data.username}`);
       } catch (err) {
         console.error("Unauthorized:", err);
-        window.location.href = "/login"; // redirect if not authenticated
+        window.location.href = "/login";
       }
     };
-
     fetchDashboard();
   }, []);
 
@@ -62,32 +61,72 @@ function Dashboard() {
     }
   };
 
-  const handleFileUpload = (e, setData, setHeaders) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleFileUpload = async (e, setFile, setData, setHeaders, setLoading) => {
+    const uploadedFile = e.target.files[0];
+    if (!uploadedFile) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const workbook = XLSX.read(event.target.result, { type: "binary" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(sheet);
-      if (jsonData.length === 0) return;
+    setLoading(true);
+    setFile(uploadedFile);
+    setData([]);
+    setHeaders([]);
+    e.target.value = ""; 
 
-      const dynamicHeaders = Object.keys(jsonData[0]);
-      setHeaders(dynamicHeaders);
+    try {
+      const isExcel = uploadedFile.name.endsWith(".xlsx") || uploadedFile.name.endsWith(".xls");
 
-      const formattedData = jsonData.map((row, idx) => ({
-        id: idx,
-        ...row,
-      }));
+      if (isExcel) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const workbook = XLSX.read(event.target.result, { type: "binary" });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet);
+            if (jsonData.length > 0) {
+              setHeaders(Object.keys(jsonData[0]));
+              setData(jsonData.map((row, idx) => ({ id: idx, ...row })));
+            }
+          } catch (error) {
+             console.error("Error parsing Excel file:", error);
+             alert("Could not parse the Excel file.");
+             setFile(null);
+          } finally {
+             setLoading(false);
+          }
+        };
+        reader.readAsBinaryString(uploadedFile);
 
-      setData(formattedData);
-    };
-    reader.readAsBinaryString(file);
+      } else if (uploadedFile.type === "application/pdf") {
+        const formData = new FormData();
+        formData.append("pdfFile", uploadedFile);
 
-    e.target.value = "";
+        const res = await axios.post(
+          "http://localhost:8001/api/files/extract-pdf",
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
+        );
+        
+        const { data: tableData } = res.data;
+        if (tableData && tableData.length > 0) {
+          setHeaders(Object.keys(tableData[0]));
+          setData(tableData.map((row, idx) => ({ id: idx, ...row })));
+        } else {
+          alert("No chartable table found in the PDF.");
+        }
+        setLoading(false);
+
+      } else {
+        alert("Unsupported file type. Please upload an Excel or PDF file.");
+        setFile(null);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error processing file:", error);
+      alert("Could not process the file. The server might be down or the file is corrupted.");
+      setFile(null);
+      setLoading(false);
+    }
   };
-
+  
   const ROW_HEIGHT = 52;
   const HEADER_EXTRA = 110;
   const fixedHeight = 5 * ROW_HEIGHT + HEADER_EXTRA;
@@ -108,9 +147,7 @@ function Dashboard() {
           pagination={false}
           hideFooter
           disableSelectionOnClick
-          sx={{
-            ".MuiDataGrid-virtualScroller": { overflowY: "auto" },
-          }}
+          sx={{ ".MuiDataGrid-virtualScroller": { overflowY: "auto" } }}
         />
       </div>
     );
@@ -129,14 +166,10 @@ function Dashboard() {
         label: h,
         data: rows.map((d) => Number(d[h]) || 0),
         borderColor: [
-          "rgba(54,162,235,1)",
-          "rgba(75,192,192,1)",
-          "rgba(255,99,132,1)",
+          "rgba(54,162,235,1)", "rgba(75,192,192,1)", "rgba(255,99,132,1)",
         ][i % 3],
         backgroundColor: [
-          "rgba(54,162,235,0.5)",
-          "rgba(75,192,192,0.5)",
-          "rgba(255,99,132,0.5)",
+          "rgba(54,162,235,0.5)", "rgba(75,192,192,0.5)", "rgba(255,99,132,0.5)",
         ][i % 3],
         borderWidth: 2,
       })),
@@ -155,93 +188,78 @@ function Dashboard() {
       </div>
     );
   };
-
-  return (
-    <div className="dashboard-container">
-      <h1 className="dashboard-header">📊 Excel Comparison Dashboard</h1>
-      <p>{welcome}</p>
-      <button onClick={handleLogout}>Logout</button>
-
-      {/* Upload Statement 1 */}
-      <div className="file-upload">
-        <label>Upload Statement 1:</label>
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={(e) => handleFileUpload(e, setData1, setHeaders1)}
-        />
-      </div>
-
-      {/* Upload or Change Statement 2 */}
-      {data1.length > 0 && (
-        <div className="file-upload-secondary">
-          {data2.length === 0 ? (
-            <>
-              <label>Want to compare? Upload Statement 2:</label>
-              <input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={(e) => handleFileUpload(e, setData2, setHeaders2)}
-              />
-            </>
-          ) : (
-            <>
-              <p><strong>Statement 2:</strong> File uploaded ✅</p>
-              <label>Change Statement 2:</label>
-              <input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={(e) => handleFileUpload(e, setData2, setHeaders2)}
-              />
-              <button
-                onClick={() => {
-                  setData2([]);
-                  setHeaders2([]);
-                }}
-              >
-                Remove Statement 2
-              </button>
-            </>
-          )}
+  
+  const renderFileInfo = (file, data, headers, statementNum, isLoading) => {
+    if (isLoading) {
+      return (
+        <div className="dashboard-card">
+          <h2>Statement {statementNum}</h2>
+          <p>⏳ Processing file, please wait...</p>
         </div>
-      )}
+      );
+    }
+    if (!file) return null;
 
-      {/* Statement 1 only */}
-      {data1.length > 0 && data2.length === 0 && (
+    if (data.length > 0) {
+      return (
         <div>
           <div className="dashboard-card">
-            <h2>Statement 1 - Data Table</h2>
-            {renderDataGrid(data1, headers1)}
+            <h2>Statement {statementNum} - Data Table ({file.name})</h2>
+            {renderDataGrid(data, headers)}
           </div>
-          {renderCharts(data1, headers1)}
+          {renderCharts(data, headers)}
         </div>
-      )}
-
-      {/* Comparison view */}
-      {data1.length > 0 && data2.length > 0 && (
-        <div className="comparison-grid">
-          <div>
-            <div className="dashboard-card">
-              <h2>Statement 1 - Data Table</h2>
-              {renderDataGrid(data1, headers1)}
-            </div>
-            {renderCharts(data1, headers1)}
-          </div>
-          <div>
-            <div className="dashboard-card">
-              <h2>Statement 2 - Data Table</h2>
-              {renderDataGrid(data2, headers2)}
-            </div>
-            {renderCharts(data2, headers2)}
-          </div>
+      );
+    } else {
+      return (
+        <div className="dashboard-card">
+          <h2>Statement {statementNum} - File Uploaded</h2>
+          <p><strong>{file.name}</strong> is ready for text analysis by Gemini, but no table was found for charting.</p>
         </div>
-      )}
+      );
+    }
+  };
 
-      <div style={{ marginTop: "2rem" }}>
-        <GeminiChat />
+ return (
+  <div className="dashboard-container">
+    
+    <div className="dashboard-top-bar">
+      <div> {/* This div groups the title and welcome message together */}
+        <h1 className="dashboard-header">📊 FinDash | Data Analysis Dashboard</h1>
+        <p>{welcome}</p>
       </div>
+      <button onClick={handleLogout} className="logout-button">Logout</button>
     </div>
-  );
+
+    {/* The rest of your dashboard content remains the same */}
+    <div className="file-upload">
+      <label>Upload Statement 1 (Excel or PDF):</label>
+      <input
+        type="file" accept=".xlsx, .xls, .pdf"
+        onChange={(e) => handleFileUpload(e, setFile1, setData1, setHeaders1, setLoading1)}
+      />
+    </div>
+
+    {file1 && (
+      <div className="file-upload-secondary">
+        <label>Upload Statement 2 to Compare:</label>
+        <input
+          type="file" accept=".xlsx, .xls, .pdf"
+          onChange={(e) => handleFileUpload(e, setFile2, setData2, setHeaders2, setLoading2)}
+        />
+      </div>
+    )}
+    
+    <div className={file1 && file2 ? "comparison-grid" : ""}>
+      {file1 && renderFileInfo(file1, data1, headers1, 1, loading1)}
+      {file2 && renderFileInfo(file2, data2, headers2, 2, loading2)}
+    </div>
+
+    <div style={{ marginTop: "2rem" }}>
+      <GeminiChat data1={data1} data2={data2} file1={file1} file2={file2} />
+    </div>
+  </div>
+);
 }
 
 export default Dashboard;

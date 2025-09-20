@@ -72,5 +72,5 @@ export const logoutUser = (req, res) => {
 
 // Dashboard protected route
 export const dashboard = (req, res) => {
-    res.json({ message: "Welcome to Dashboard ✅" });
+    res.json({ message: "Welcome to Dashboard..." });
 };

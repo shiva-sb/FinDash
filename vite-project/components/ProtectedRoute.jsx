@@ -1,7 +1,7 @@
-// src/components/ProtectedRoute.jsx
+
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "../src/axios.js"; // make sure this has baseURL and withCredentials: true
+import axios from "../src/axios.js"; 
 
 function ProtectedRoute({ children }) {
   const [isAuth, setIsAuth] = useState(null);
@@ -22,7 +22,7 @@ function ProtectedRoute({ children }) {
     checkAuth();
   }, []);
 
-  if (isAuth === null) return <p>Loading...</p>; // or a spinner
+  if (isAuth === null) return <p>Loading...</p>; 
 
   return isAuth ? children : <Navigate to="/login" replace />;
 }

@@ -32,8 +32,8 @@ mongoose.connect(process.env.ATLAS_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log("✅ MongoDB connected"))
-.catch(err => console.error("❌ DB error:", err));
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.error("DB error:", err));
 
 // Start server
 app.listen(PORT, () => {

@@ -1,86 +1,123 @@
+/* ---------------------------------- */
+/* NEW Layout Styles                  */
+/* ---------------------------------- */
+
 .authContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
   padding: 20px;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-.authForm {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* This is the new white box that holds the two panels */
+.authLayout {
+  display: flex;
   width: 100%;
-  max-width: 400px;
+  max-width: 950px; /* Increased max-width for the two panels */
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Important for keeping the rounded corners */
+}
+
+/* The new left-side welcome panel */
+.authWelcomePanel {
+  flex: 1; /* Takes up half the space */
+  padding: 40px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.panelContent {
+  max-width: 350px;
+}
+
+.panelTitle {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.panelSubtitle {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 24px;
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+}
+
+.featureList li {
+  margin-bottom: 12px;
+  padding-left: 24px;
+  position: relative;
+}
+
+/* Adds a checkmark icon before each feature */
+.featureList li::before {
+  content: '✔';
+  position: absolute;
+  left: 0;
+  color: #a0d8ff;
+}
+
+
+/* ---------------------------------- */
+/* Existing Form Styles (Updated)     */
+/* ---------------------------------- */
+
+.authForm {
+  flex: 1.2; /* Makes the form slightly wider than the welcome panel */
+  padding: 40px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .authTitle {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #2d3748;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+  font-size: 28px;
+  font-weight: 700;
 }
 
-.inputGroup {
-  margin-bottom: 1.5rem;
-}
+/* ... the rest of your form styles (.inputGroup, .label, etc.) remain the same ... */
+.inputGroup { margin-bottom: 1.5rem; }
+.label { display: block; margin-bottom: 0.5rem; color: #4a5568; font-weight: 600; }
+.input { width: 100%; padding: 12px 16px; border: 1px solid #d0d7de; border-radius: 10px; font-size: 16px; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.input:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); }
+.error { color: #e53e3e; font-size: 0.875rem; margin-top: 0.25rem; }
+.submitButton { width: 100%; padding: 12px 16px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
+.submitButton:hover { background: #0056b3; }
+.toggleText { text-align: center; margin-top: 1.5rem; color: #4a5568; }
+.toggleLink { color: #007bff; text-decoration: none; font-weight: 600; }
+.toggleLink:hover { text-decoration: underline; }
 
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: black;
-}
+/* ---------------------------------- */
+/* Responsive Styles                  */
+/* ---------------------------------- */
 
-.input {
-  width:92%;
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
+@media (max-width: 768px) {
+  .authLayout {
+    flex-direction: column; /* Stack panels vertically on small screens */
+  }
 
-.input:focus {
-  outline: none;
-  border-color: #667eea;
-}
+  .authWelcomePanel {
+    display: none; /* Hide the welcome panel on mobile for a simpler view */
+  }
 
-.error {
-  color: #e53e3e;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.submitButton {
-  width: 100%;
-  padding: 0.75rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.submitButton:hover {
-  background: #5a67d8;
-}
-
-.toggleText {
-  text-align: center;
-  margin-top: 1rem;
-  color: #4a5568;
-}
-
-.toggleLink {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.toggleLink:hover {
-  text-decoration: underline;
+  .authForm {
+    flex: 1; /* Make form take full width */
+  }
 }

@@ -1,7 +1,7 @@
 /* 🌐 Whole Page */
 .dashboard-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f9fbfd, #eef2f7);
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
   padding: 40px 30px;
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   color: #333;
@@ -73,6 +73,7 @@
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   margin-bottom: 30px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow-x: auto; 
 }
 
 .dashboard-card:hover {
@@ -120,7 +121,8 @@
 /* 📑 Comparison Grid */
 .comparison-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* ✨ CHANGED: This is a more robust definition for grid columns that prevents content overflow */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 28px;
   align-items: start;
 }
@@ -131,11 +133,12 @@
   gap: 22px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .comparison-grid {
     grid-template-columns: 1fr;
   }
 }
+
 /* 🛠 Fix DataGrid overflow inside cards */
 .MuiDataGrid-root {
   width: 100% !important;
@@ -159,5 +162,138 @@
 }
 
 .MuiDataGrid-virtualScroller {
-  overflow-x: hidden !important; /* 🚫 Prevent horizontal scroll breaking layout */
+  overflow-x: auto !important; 
+}
+
+
+/* ---------------------------------- */
+/* Gemini Chat Styles        */
+/* ---------------------------------- */
+
+/* Main Container */
+.gemini-chat {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  gap: 16px; /* Replaces the need for <br /> tags */
+}
+
+/* Chat Title */
+.gemini-chat h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #202020;
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eaecef;
+}
+
+/* Text Input Area */
+.gemini-chat textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical; /* Allow vertical resizing, but not horizontal */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gemini-chat textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* Send Button */
+.gemini-chat button {
+  align-self: flex-end; /* Push button to the right */
+  padding: 10px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.gemini-chat button:hover {
+  background-color: #0056b3;
+}
+
+.gemini-chat button:active {
+  transform: scale(0.98);
+}
+
+/* Style for when the button is disabled (e.g., during loading) */
+.gemini-chat button:disabled {
+  background-color: #a0c7f0;
+  cursor: not-allowed;
+}
+
+/* Response Box */
+.gemini-response {
+  margin-top: 12px;
+  padding: 20px;
+  background-color: #f4f6fa;
+  border-radius: 12px;
+  border: 1px solid #e1e4e8;
+}
+
+.gemini-response h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.gemini-response p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  white-space: pre-wrap; /* This is important for preserving formatting */
+}
+
+/* ---------------------------------- */
+/* Header & Logout Button Styles      */
+/* ---------------------------------- */
+
+/* Main container for the top bar */
+.dashboard-top-bar {
+  display: flex; /* Activates Flexbox */
+  justify-content: space-between; /* Pushes items to opposite ends */
+  align-items: center; /* Vertically aligns items in the middle */
+  margin-bottom: 40px; /* Adds space below the header bar */
+}
+
+/* Override the centering on the main title now that it's in a flex container */
+.dashboard-top-bar .dashboard-header {
+  text-align: left;
+  margin-bottom: 5px; /* Reduce space below the title */
+}
+
+/* Style for the new logout button */
+.logout-button {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  background-color: #eef2f7;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #e3e8ee;
+  border-color: #b1bac4;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
