@@ -22,6 +22,9 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+// Serve uploaded files statically
+app.use("/uploads", express.static("uploads"));
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/gemini", geminiRoutes);
@@ -32,8 +35,8 @@ mongoose.connect(process.env.ATLAS_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.error("DB error:", err));
+.then(() => console.log("✅ MongoDB connected"))
+.catch(err => console.error("❌ DB error:", err));
 
 // Start server
 app.listen(PORT, () => {
