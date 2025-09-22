@@ -10,8 +10,7 @@ FinDash is a dynamic web application designed to help users upload, visualize, a
 
 | Dashboard | Charts View |
 | :---: | :---: |
-| ![Dashboard](https://github.com/user-attachments/assets/7dc207dd-3783-44ed-81b9-c5aa048825e3) | ![Charts](https://github.com/user-attachments/assets/94dcbe4a-c293-4e1e-a09d-9c8dabc5fcea) |*
-
+| ![Dashboard](https://github.com/user-attachments/assets/7dc207dd-3783-44ed-81b9-c5aa048825e3) | ![Charts](https://github.com/user-attachments/assets/94dcbe4a-c293-4e1e-a09d-9c8dabc5fcea) |
 ## ✨ Key Features
 
 * **Multi-Format File Upload**: Seamlessly upload financial statements in both `.xlsx` and `.pdf` formats.
@@ -62,7 +61,7 @@ Follow these instructions to get a local copy of the project up and running for 
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/shiva-sb/FinDash.git
+    git clone [https://github.com/your-username/findash.git](https://github.com/your-username/findash.git)
     cd findash
     ```
 
@@ -110,7 +109,29 @@ Follow these instructions to get a local copy of the project up and running for 
 
 ---
 
+## 📂 Project Structure
+```bash
+findash/
+├── client/              # React Frontend
+│   ├── public/
+│   └── src/
+│       ├── components/  # Reusable React components (Dashboard, GeminiChat, etc.)
+│       ├── pages/       # Page components (Login, Register)
+│       ├── App.jsx
+│       ├── main.jsx
+│       └── index.css
+│
+└── Server/              # Node.js & Express Backend
+├── controllers/     # Logic for handling requests (auth, files, gemini)
+├── middleware/      # Custom middleware (e.g., verifyToken)
+├── models/          # Mongoose schemas (e.g., User model)
+├── routes/          # API route definitions
+├── uploads/         # Temporary storage for uploaded files
+├── .env             # Environment variables (GITIGNORED)
+└── index.js         # Main server entry point
+```
+---
+
 ## 📜 License
 
 This project is licensed under the MIT License - see the `LICENSE` file for details.
-
